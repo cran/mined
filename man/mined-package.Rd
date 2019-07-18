@@ -14,7 +14,7 @@ Generate minimum energy design (MinED) samples from an unnormalized probability 
 \tabular{ll}{
 Package: \tab mined\cr
 Type: \tab Package\cr
-Version: \tab 1.0-1\cr
+Version: \tab 1.0-2\cr
 Date: \tab 2018-10-06\cr
 License: \tab LGPL-2.1\cr
 }

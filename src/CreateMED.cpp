@@ -128,7 +128,8 @@ double computeCritAddNewPoint(const Eigen::MatrixXd & existingMED, const Eigen::
 // [[Rcpp::export]]
 List mined(//int dim, // the dimension of density function
                  Eigen::MatrixXd & initial, // initial design given by user
-                 Function logf // logarithm of density function
+                 Function logf, // logarithm of density function
+                 Rcpp::Nullable<Rcpp::IntegerVector> K_iter = R_NilValue
                    )
 {
   int dim = initial.cols();
@@ -166,7 +167,16 @@ List mined(//int dim, // the dimension of density function
    * define the result of choosing MED points using greedy algorithm
    */
   List GreedyRes;
-  int K = ceil(4 * sqrt(dim));
+  int K;
+  if(K_iter.isNull())
+  {
+    K = ceil(4 * sqrt(dim));
+  }
+  else
+  {
+    Rcpp::IntegerVector temp(K_iter);
+    K = (int)temp[0];
+  }
   double gamma = 1.0 / K;
   MatrixXd SigmaK = varCPP(LatticeRules);
   double s(0.0);

@@ -34,14 +34,15 @@ BEGIN_RCPP
 END_RCPP
 }
 // mined
-List mined(Eigen::MatrixXd& initial, Function logf);
-RcppExport SEXP _mined_mined(SEXP initialSEXP, SEXP logfSEXP) {
+List mined(Eigen::MatrixXd& initial, Function logf, Rcpp::Nullable<Rcpp::IntegerVector> K_iter);
+RcppExport SEXP _mined_mined(SEXP initialSEXP, SEXP logfSEXP, SEXP K_iterSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Eigen::MatrixXd& >::type initial(initialSEXP);
     Rcpp::traits::input_parameter< Function >::type logf(logfSEXP);
-    rcpp_result_gen = Rcpp::wrap(mined(initial, logf));
+    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::IntegerVector> >::type K_iter(K_iterSEXP);
+    rcpp_result_gen = Rcpp::wrap(mined(initial, logf, K_iter));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -49,7 +50,7 @@ END_RCPP
 static const R_CallMethodDef CallEntries[] = {
     {"_mined_SelectMinED", (DL_FUNC) &_mined_SelectMinED, 5},
     {"_mined_Lattice", (DL_FUNC) &_mined_Lattice, 2},
-    {"_mined_mined", (DL_FUNC) &_mined_mined, 2},
+    {"_mined_mined", (DL_FUNC) &_mined_mined, 3},
     {NULL, NULL, 0}
 };
 

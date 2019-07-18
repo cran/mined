@@ -10,18 +10,22 @@ Generate MinED samples from an unnormalized density function.
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
-mined(initial, logf)
+mined(initial, logf, K_iter = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{initial}{
-  An n-by-p matrix containing the initial uniform samples from [0,1]^p. 
+  An n-by-p matrix containing the initial uniform samples from \code{[0,1]^p}. 
 %%     ~~Describe \code{ExploreDesign} here~~
 }
   \item{logf}{
-  An R function to compute the logarithm of unnormalized density function. The input region should be scaled in [0,1]^p.
+  An R function to compute the logarithm of unnormalized density function. The input region should be scaled in \code{[0,1]^p}.
 %%     ~~Describe \code{logFunc} here~~
 }
+  \item{K_iter}{
+  The number of iteration steps for annealed version of the unnormalized posterior density. Optional, default is \code{NULL}. If \code{NULL}, \code{K_iter = ceiling(4 * sqrt(p))} is used.
+  %%  ~~Describe \code{K_iter} here~~
+  }
 }
 \details{
 %%  ~~ If necessary, more details than the description above ~~
@@ -71,7 +75,7 @@ logf <- function(para)
   return(val)
 }
 
-res <- mined::mined(initial, logf)
+res <- mined::mined(initial, logf, K_iter = 8)
 dim(res$points)
 dim(res$cand)
 
