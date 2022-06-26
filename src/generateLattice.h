@@ -51,8 +51,8 @@ MatrixXd generateLattice(int n, // number of points in the lattice rule, scalar,
   //
   Environment base("package:base");
   Function Re = base["Re"];
-  int min_index;
-  double min_E2;
+  int min_index(0);
+  double min_E2(0.0);
   //double noise;
   NumericVector temp_psi(m, 1.0);
   int temp_index(0);

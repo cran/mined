@@ -16,6 +16,9 @@ using namespace std;
 #define minTwo(a, b) (a<b? a:b)
 #define MaxTwo(a, b) (a>b? a:b)
 
+
+# define PI 3.1415926
+
 /*
  * assert a number is prime
  */

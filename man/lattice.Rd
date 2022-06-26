@@ -20,7 +20,7 @@ The number of dimensions.
 }
 }
 \value{
-\item{}{
+{
 An n-by-p matrix containing the good lattice points.}
 }
 \references{

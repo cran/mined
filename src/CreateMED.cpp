@@ -59,13 +59,13 @@ Rcpp::List lkpredict(Eigen::MatrixXd DesignPoints,
   LKPredictor m_pred(DesignPoints, LfVector);
   m_pred.fit();
   VectorXd tempPoint(DesignPoints.cols());
-  List PredictorRes;
+  // List PredictorRes;
   Eigen::VectorXd preVector(PrePoints.rows());
   Eigen::VectorXd preMind(PrePoints.rows());
   for(int i = 0; i < PrePoints.rows(); i++)
   {
     tempPoint = PrePoints.row(i);
-    PredictorRes = m_pred.predictor(tempPoint);
+    List PredictorRes = m_pred.predictor(tempPoint);
     preVector(i) = (double) PredictorRes[1];
     preMind(i) = (double) PredictorRes[0];
   }
@@ -82,28 +82,29 @@ Eigen::MatrixXd generateAugMatrix(Eigen::MatrixXd & existMatrix,
                                   double Radius,
                                   int n)
 {
-  Eigen::VectorXd DistExistMatrix(existMatrix.rows());
-  DistExistMatrix = fastPdist(existMatrix, tempPoint);
+  // Eigen::VectorXd DistExistMatrix(existMatrix.rows());
+  Eigen::VectorXd DistExistMatrix = fastPdist(existMatrix, tempPoint);
   Eigen::MatrixXd AugMatrix(ExploreDesign.rows(), ExploreDesign.cols());
   AugMatrix = (MatrixXd::Constant(ExploreDesign.rows(), ExploreDesign.cols(), 1.0) * 
     tempPoint.asDiagonal()).array() + Radius / sqrt(existMatrix.cols())
     * 2.0 * (ExploreDesign.array() - .5);
-  VectorXi orderID;
-  VectorXi clD, clD2;
-  Eigen::VectorXd ratio1, ratio2;
+  VectorXi orderID(existMatrix.rows());
   int ncl1(round(3.0 * n / 8)), ncl2(round(n / 8.0));
+  VectorXi clD(ncl1), clD2(ncl2);
+  // Eigen::VectorXd ratio1, ratio2;
+  
   orderID = orderCPP(DistExistMatrix);
   clD = orderID.segment(1, ncl1);
   clD2 = clD.segment(0, ncl2);
-  ratio1 = (Radius / subVectElements(DistExistMatrix, clD).array()).min(0.5).matrix();
-  ratio2 = (Radius / subVectElements(DistExistMatrix, clD2).array()).min(0.5).matrix();
-  Eigen::MatrixXd Mlc1, Mlc2;
-  Mlc1 = (ratio1.asDiagonal() * MatrixXd::Constant(ncl1, existMatrix.cols(), 1.0)).array() * 
+  Eigen::VectorXd ratio1 = (Radius / subVectElements(DistExistMatrix, clD).array()).min(0.5).matrix();
+  Eigen::VectorXd ratio2 = (Radius / subVectElements(DistExistMatrix, clD2).array()).min(0.5).matrix();
+  // Eigen::MatrixXd Mlc1, Mlc2;
+  Eigen::MatrixXd Mlc1 = (ratio1.asDiagonal() * MatrixXd::Constant(ncl1, existMatrix.cols(), 1.0)).array() * 
     subMatRows(existMatrix, clD).array() + ((1.0 - ratio1.array()).matrix() * tempPoint.transpose()).array();
-  Mlc2 = ((1.0 + ratio2.array()).matrix() * tempPoint.transpose()).array() - (ratio2.asDiagonal() * MatrixXd::Constant(ncl2, existMatrix.cols(), 1.0)).array() * 
+  Eigen::MatrixXd Mlc2 = ((1.0 + ratio2.array()).matrix() * tempPoint.transpose()).array() - (ratio2.asDiagonal() * MatrixXd::Constant(ncl2, existMatrix.cols(), 1.0)).array() * 
     subMatRows(existMatrix, clD2).array();
-  Eigen::MatrixXd Mlc;
-  Mlc = bindMatByRows(Mlc1, Mlc2);
+  // Eigen::MatrixXd Mlc;
+  Eigen::MatrixXd Mlc = bindMatByRows(Mlc1, Mlc2);
   return bindMatByRows(AugMatrix, Mlc);
 }
 
@@ -129,32 +130,37 @@ double computeCritAddNewPoint(const Eigen::MatrixXd & existingMED, const Eigen::
 List mined(//int dim, // the dimension of density function
                  Eigen::MatrixXd & initial, // initial design given by user
                  Function logf, // logarithm of density function
-                 Rcpp::Nullable<Rcpp::IntegerVector> K_iter = R_NilValue
+                 int K_iter = 0
                    )
 {
   int dim = initial.cols();
   int DesignSize = initial.rows();
   int ExDesignSize = reportMaxPrime(100 + 5 * (dim + 1)); // the design size
-  Eigen::MatrixXd NewPoints; // the points new evaluated
-  Eigen::VectorXd Newlf; // the lf values at new evaluated points
-  Eigen::MatrixXd MEDPoints; // the MED points selected in last iteration
-  Eigen::VectorXd MEDlf; // the corresponding lf values
-  Eigen::MatrixXd MED_k; // the MED points selected in current iteration
-  Eigen::VectorXd MEDlf_k; // the corresponding lf values
-  Eigen::MatrixXd EvaluatedPoints;
-  Eigen::VectorXd Evaluatedlf;
+  // Eigen::MatrixXd NewPoints; // the points new evaluated
+  // Eigen::VectorXd Newlf; // the lf values at new evaluated points
+  // Eigen::MatrixXd MEDPoints; // the MED points selected in last iteration
+  // Eigen::VectorXd MEDlf; // the corresponding lf values
+  // Eigen::MatrixXd MED_k; // the MED points selected in current iteration
+  // Eigen::VectorXd MEDlf_k; // the corresponding lf values
+  // Eigen::MatrixXd EvaluatedPoints;
+  // Eigen::VectorXd Evaluatedlf;
   /*
    * In the first step, a lattrice rules is used as the initial design.
    * The corresponding lf values are calculated.
    */
   Eigen::MatrixXd LatticeRules = initial;
   Eigen::MatrixXd ExploreDesignCand = generateLattice(ExDesignSize, dim);
-  Eigen::VectorXd ExploreDesignlf = Eigen::MatrixXd::Zero(1, ExDesignSize);
-  List SearchExplore;
-  int ExploreSize = round(ExDesignSize / 2.0);
+  Eigen::VectorXd ExploreDesignlf(ExDesignSize); // = Eigen::MatrixXd::Zero(1, ExDesignSize);
+  for(int i = 0; i < ExDesignSize; i++)
+  {
+    ExploreDesignlf(i) = 0.0;
+  }
+  // List SearchExplore;
+  int ExploreSize = int(round(ExDesignSize / 2.0));
   Eigen::MatrixXd IdentityMat = Eigen::MatrixXd::Identity(dim, dim);
-  SearchExplore = chooseMED(ExploreDesignCand, ExploreDesignlf, 
-                            ExploreSize, IdentityMat, 1.0, 0.0);
+  // MatrixXd SigmaK = varCPP(LatticeRules);
+  List SearchExplore = chooseMED(ExploreDesignCand, ExploreDesignlf, ExploreSize, 
+		  IdentityMat, 1.0, 0.0);
   Eigen::MatrixXd ExploreDesign = SearchExplore[0];
   Eigen::VectorXd Latticelf(DesignSize);
   NumericVector LogFunRes; // the result of R function logf
@@ -166,42 +172,41 @@ List mined(//int dim, // the dimension of density function
   /*
    * define the result of choosing MED points using greedy algorithm
    */
-  List GreedyRes;
-  int K;
-  if(K_iter.isNull())
+  // List GreedyRes;
+  int K(0);
+  if(K_iter == 0)
   {
     K = ceil(4 * sqrt(dim));
   }
   else
   {
-    Rcpp::IntegerVector temp(K_iter);
-    K = (int)temp[0];
+    K = K_iter;
   }
   double gamma = 1.0 / K;
   MatrixXd SigmaK = varCPP(LatticeRules);
   double s(0.0);
-  GreedyRes = chooseMED(LatticeRules, Latticelf, DesignSize, SigmaK, gamma, s);
-  MEDPoints = GreedyRes[0];
-  MEDlf = GreedyRes[1];
-  MED_k = MEDPoints;
-  MEDlf_k = MEDlf;
-  EvaluatedPoints = MEDPoints;
-  Evaluatedlf = MEDlf;
+  List GreedyRes = chooseMED(LatticeRules, Latticelf, DesignSize, SigmaK, gamma, s);
+  Eigen::MatrixXd MEDPoints = GreedyRes[0];
+  Eigen::VectorXd MEDlf = GreedyRes[1];
+  Eigen::MatrixXd MED_k = MEDPoints;
+  Eigen::VectorXd MEDlf_k = MEDlf;
+  Eigen::MatrixXd EvaluatedPoints = MEDPoints;
+  Eigen::VectorXd Evaluatedlf = MEDlf;
 
   /*
    * 
    */
   VectorXd q(2);q << 0.9, 0.1;
   VectorXd q_vector(2);
-  Eigen::MatrixXd PairDistMat;
-  Eigen::VectorXd DistAugEva;
-  Eigen::VectorXd CurrentPoint; // the point considered in current loop
-  Eigen::VectorXi PermIndex;
-  Eigen::MatrixXd AugMatrix;
-  Eigen::VectorXd RadiusVect;
-  Eigen::VectorXd DistCurrentEva;
-  Eigen::VectorXi orderID;
-  Eigen::VectorXi tempID;
+  Eigen::MatrixXd PairDistMat(DesignSize, DesignSize);
+  // Eigen::VectorXd DistAugEva;
+  Eigen::VectorXd CurrentPoint(dim); // the point considered in current loop
+  Eigen::VectorXi PermIndex(dim);
+  // Eigen::MatrixXd AugMatrix;
+  // Eigen::VectorXd RadiusVect;
+  // Eigen::VectorXd DistCurrentEva;
+  // Eigen::VectorXi orderID;
+  // Eigen::VectorXi tempID;
   
   /*
    * Explore the support region by considering annealing version of density funcion
@@ -215,7 +220,7 @@ List mined(//int dim, // the dimension of density function
     // compute the search radius vector
     PairDistMat = fastPdist(MEDPoints, MEDPoints);
     PairDistMat = setDiagonal(PairDistMat, 1e32);
-    RadiusVect = PairDistMat.rowwise().minCoeff();
+    Eigen::VectorXd RadiusVect = PairDistMat.rowwise().minCoeff();
     /*
      * From each point in current MED, explore and find out a new candidate at which lf is
      * evaluated.
@@ -225,12 +230,12 @@ List mined(//int dim, // the dimension of density function
       CurrentPoint = MEDPoints.row(j);
       PermIndex = sampleCPP(dim);
       ExploreDesign = subMatCols(ExploreDesign, PermIndex);
-      AugMatrix = generateAugMatrix(MEDPoints, ExploreDesign, CurrentPoint, RadiusVect(j), DesignSize);
+      Eigen::MatrixXd AugMatrix = generateAugMatrix(MEDPoints, ExploreDesign, CurrentPoint, RadiusVect(j), DesignSize);
       /*
        * Compress the augmented matrix by considering the distances betwwen the augmented points and points evaluated
        * in previous iterations.
        */
-      DistAugEva = fastPdist(AugMatrix, EvaluatedPoints).rowwise().minCoeff();
+      Eigen::VectorXd DistAugEva = fastPdist(AugMatrix, EvaluatedPoints).rowwise().minCoeff();
       int CompressCount = (DistAugEva.array() > .5 * RadiusVect(j)).count();
       if(CompressCount > DesignSize / 2)
       {
@@ -270,9 +275,9 @@ List mined(//int dim, // the dimension of density function
       /*
        * predict lf values at AugMatrix using limit kriging predictor.
        */
-      DistCurrentEva = fastPdist(EvaluatedPoints, CurrentPoint);
-      orderID = orderCPP(DistCurrentEva);
-      tempID = orderID.head(DesignSize);
+      Eigen::VectorXd DistCurrentEva = fastPdist(EvaluatedPoints, CurrentPoint);
+      Eigen::VectorXi orderID = orderCPP(DistCurrentEva);
+      Eigen::VectorXi tempID = orderID.head(DesignSize);
       Eigen::MatrixXd TrainingPoints = subMatRows(EvaluatedPoints, tempID);
       Eigen::VectorXd Traininglf = subVectElements(Evaluatedlf, tempID);
       Rcpp::List AugPred = lkpredict(TrainingPoints, Traininglf, AugMatrix);

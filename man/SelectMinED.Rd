@@ -5,7 +5,7 @@
   Select Minimum Energy Design samples from a candidate set
 }
 \description{
-Select MinED samples from \code{candidates} by optimizing the generalized MinED criterion in Joseph et al. (2018).
+Select MinED samples from \code{candidates} by optimizing the generalized MinED criterion in Joseph et al. (2019).
 }
 \usage{
 SelectMinED(candidates, candlf, n, gamma=1, s=2)
@@ -44,7 +44,7 @@ The value returned from the function is a list containing the following componen
 }
 \references{
 %% ~put references to the literature/web site here ~
-Joseph, V. R., Wang, D., Gu, L., Lv, S. and Tuo, R. (2018). "Deterministic Sampling of Expensive Posteriors Using Minimum Energy Designs.", \emph{Technometrics}, arXiv:1712.08929.
+Joseph, V. R., Wang, D., Gu, L., Lv, S., and Tuo, R. (2019). "Deterministic Sampling of Expensive Posteriors Using Minimum Energy Designs", \emph{Technometrics}, 61, 297-308, arXiv:1712.08929, DOI:10.1080/00401706.2018.1552203.
 }
 \author{
 Dianpeng Wang <wdp@bit.edu.cn> and V. Roshan Joseph <roshan@gatech.edu>

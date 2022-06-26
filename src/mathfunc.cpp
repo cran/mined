@@ -175,7 +175,8 @@ int generateOrp(int n)
 */
 int argMin(VectorXd & x)
 {
-  std::ptrdiff_t i;
+  // std::ptrdiff_t i;
+  MatrixXd::Index i;
   x.minCoeff(&i);
   return i;
 }
@@ -184,7 +185,8 @@ int argMin(VectorXd & x)
 */
 int argMax(VectorXd & x)
 {
-  std::ptrdiff_t i;
+  // std::ptrdiff_t i;
+  MatrixXd::Index i;
   x.maxCoeff(&i);
   return i;
 }

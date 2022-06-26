@@ -6,6 +6,11 @@
 
 using namespace Rcpp;
 
+#ifdef RCPP_USE_GLOBAL_ROSTREAM
+Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
+Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
+#endif
+
 // SelectMinED
 Rcpp::List SelectMinED(Eigen::MatrixXd& candidates, Eigen::VectorXd& candlf, int n, double gamma, double s);
 RcppExport SEXP _mined_SelectMinED(SEXP candidatesSEXP, SEXP candlfSEXP, SEXP nSEXP, SEXP gammaSEXP, SEXP sSEXP) {
@@ -34,14 +39,14 @@ BEGIN_RCPP
 END_RCPP
 }
 // mined
-List mined(Eigen::MatrixXd& initial, Function logf, Rcpp::Nullable<Rcpp::IntegerVector> K_iter);
+List mined(Eigen::MatrixXd& initial, Function logf, int K_iter);
 RcppExport SEXP _mined_mined(SEXP initialSEXP, SEXP logfSEXP, SEXP K_iterSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Eigen::MatrixXd& >::type initial(initialSEXP);
     Rcpp::traits::input_parameter< Function >::type logf(logfSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::IntegerVector> >::type K_iter(K_iterSEXP);
+    Rcpp::traits::input_parameter< int >::type K_iter(K_iterSEXP);
     rcpp_result_gen = Rcpp::wrap(mined(initial, logf, K_iter));
     return rcpp_result_gen;
 END_RCPP

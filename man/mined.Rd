@@ -10,7 +10,7 @@ Generate MinED samples from an unnormalized density function.
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
-mined(initial, logf, K_iter = NULL)
+mined(initial, logf, K_iter = 0)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -23,7 +23,7 @@ mined(initial, logf, K_iter = NULL)
 %%     ~~Describe \code{logFunc} here~~
 }
   \item{K_iter}{
-  The number of iteration steps for annealed version of the unnormalized posterior density. Optional, default is \code{NULL}. If \code{NULL}, \code{K_iter = ceiling(4 * sqrt(p))} is used.
+  The number of iteration steps for annealed version of the unnormalized posterior density. Optional, default is \code{0}. If \code{0}, \code{K_iter = ceiling(4 * sqrt(p))} is used.
   %%  ~~Describe \code{K_iter} here~~
   }
 }
@@ -31,7 +31,7 @@ mined(initial, logf, K_iter = NULL)
 %%  ~~ If necessary, more details than the description above ~~
 This is the main function of the package, which is used for generating the MinED samples. The MinED sample can be viewed as a deterministic sample from the probability density specified in the mined function. Since only the unnormalized density is needed to generate the MinED samples, this method could be used in Bayesian computation to approximate the posterior. The method uses few evaluations of the unnormalized posterior compared to random sampling-based methods and therefore, it will be useful when the evaluations are expensive or time consuming.
 
-There are many parameters that control the performance of the algorithm, which are fixed at some reasonable values as specified in Joseph et al. (2018). The only thing user need to choose is the region for scaling the variables in [0,1]^p. Ideally it should be the highercube containing the highest posterior density region with good coverage. However, the algorithm is robust to this choice to some extend as it can shrink or expand from the intial region. Therefore, it can be chosen based on user's guessed range of each variable.
+There are many parameters that control the performance of the algorithm, which are fixed at some reasonable values as specified in Joseph et al. (2019). The only thing user need to choose is the region for scaling the variables in [0,1]^p. Ideally it should be the highercube containing the highest posterior density region with good coverage. However, the algorithm is robust to this choice to some extend as it can shrink or expand from the intial region. Therefore, it can be chosen based on user's guessed range of each variable.
 }
 \value{
 %%  ~Describe the value returned
@@ -46,7 +46,7 @@ The value returned from the function is a list containing the following componen
 \item{candlf}{Log-unormalized density function values of the samples in \code{cand}.}
 }
 \references{
-Joseph, V. R., Wang, D., Gu, L., Lv, S. and Tuo, R. (2018). "Deterministic Sampling of Expensive Posteriors Using Minimum Energy Designs.", \emph{Technometrics}, arXiv:1712.08929.
+Joseph, V. R., Wang, D., Gu, L., Lv, S., and Tuo, R. (2019). "Deterministic Sampling of Expensive Posteriors Using Minimum Energy Designs", \emph{Technometrics}, 61, 297-308, arXiv:1712.08929, DOI:10.1080/00401706.2018.1552203.
 %% ~put references to the literature/web site here ~
 }
 \author{

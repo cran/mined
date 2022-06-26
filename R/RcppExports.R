@@ -9,7 +9,7 @@ Lattice <- function(n, p) {
     .Call('_mined_Lattice', PACKAGE = 'mined', n, p)
 }
 
-mined <- function(initial, logf, K_iter = NULL) {
+mined <- function(initial, logf, K_iter = 0L) {
     .Call('_mined_mined', PACKAGE = 'mined', initial, logf, K_iter)
 }
 

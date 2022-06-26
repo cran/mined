@@ -58,7 +58,7 @@ VectorXd getLogGenDis(const MatrixXd & x, const VectorXd & y, const double s)
     {
       throw std::length_error("The columns of x must be same as the size of vector y");
     }
-    VectorXd temp;
+    VectorXd temp(x.cols());
     for(int i = 0; i < res.size(); i++)
     {
       temp = x.row(i);
@@ -107,7 +107,7 @@ MatrixXd sqrtInvMatrix(MatrixXd & SigmaMatrix)
 List chooseMED(MatrixXd & candidates, // candidates 
                VectorXd & candlf, // corresponding logarithm density functions at candidates
                int n, // number of MED points
-               MatrixXd Sigmak, // variance matrix estimated in last step
+               MatrixXd & Sigmak, // variance matrix estimated in last step
                double gamma, //
                double s //
                  )
